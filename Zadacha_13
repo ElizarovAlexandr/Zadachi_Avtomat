@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_even(int x) {
+    return x % 2 == 0;
+}
+
+int is_negative(int x) {
+    return x < 0;
+}
+
+int* filter(int *arr, size_t n, int (*pred)(int), size_t *outCount) {
+    int *res = malloc(n * sizeof(int));
+    size_t count = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        if (pred(arr[i])) {
+            res[count] = arr[i];
+            count++;
+        }
+    }
+
+    *outCount = count;
+    return res;
+}
+
+int main() {
+    int n;
+    printf("Enter count of numbers: ");
+    scanf("%d", &n);
+
+    int *nums = malloc(n * sizeof(int));
+    printf("Enter numbers:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &nums[i]);
+    }
+
+    size_t evenCount = 0;
+    int *evens = filter(nums, n, is_even, &evenCount);
+
+    size_t negCount = 0;
+    int *negs = filter(nums, n, is_negative, &negCount);
+
+    printf("Even:");
+    for (size_t i = 0; i < evenCount; i++) {
+        printf(" %d", evens[i]);
+    }
+    printf("\n");
+
+    printf("Negative:");
+    for (size_t i = 0; i < negCount; i++) {
+        printf(" %d", negs[i]);
+    }
+    printf("\n");
+
+    free(nums);
+    free(evens);
+    free(negs);
+
+    return 0;
+}
