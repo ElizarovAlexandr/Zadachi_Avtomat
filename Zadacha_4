@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Fraction {
+    int num;
+    int den;
+};
+
+int gcd(int a, int b) {
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+
+struct Fraction simplify(struct Fraction f) {
+    int g = gcd(abs(f.num), abs(f.den));
+    f.num /= g;
+    f.den /= g;
+    if (f.den < 0) {
+        f.num = -f.num;
+        f.den = -f.den;
+    }
+    return f;
+}
+
+struct Fraction add(struct Fraction a, struct Fraction b) {
+    struct Fraction res;
+    res.num = a.num * b.den + b.num * a.den;
+    res.den = a.den * b.den;
+    return simplify(res);
+}
+
+struct Fraction subtract(struct Fraction a, struct Fraction b) {
+    struct Fraction res;
+    res.num = a.num * b.den - b.num * a.den;
+    res.den = a.den * b.den;
+    return simplify(res);
+}
+
+struct Fraction multiply(struct Fraction a, struct Fraction b) {
+    struct Fraction res;
+    res.num = a.num * b.num;
+    res.den = a.den * b.den;
+    return simplify(res);
+}
+
+struct Fraction divide(struct Fraction a, struct Fraction b) {
+    struct Fraction res;
+    res.num = a.num * b.den;
+    res.den = a.den * b.num;
+    return simplify(res);
+}
+
+int main() {
+    int a, b, c, d;
+    char op;
+
+    printf("Enter expression (like 1/2 + 1/3): ");
+    scanf("%d/%d %c %d/%d", &a, &b, &op, &c, &d);
+
+    if (b == 0 || d == 0 || (op == '/' && c == 0)) {
+        printf("Error: invalid input\n");
+        return 1;
+    }
+
+    struct Fraction f1 = {a, b};
+    struct Fraction f2 = {c, d};
+    struct Fraction result;
+
+    if (op == '+') result = add(f1, f2);
+    else if (op == '-') result = subtract(f1, f2);
+    else if (op == '*') result = multiply(f1, f2);
+    else if (op == '/') result = divide(f1, f2);
+    else {
+        printf("Error: unknown operator\n");
+        return 1;
+    }
+
+    printf("Result: %d/%d\n", result.num, result.den);
+    return 0;
+}
